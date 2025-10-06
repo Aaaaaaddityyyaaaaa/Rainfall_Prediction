@@ -1,4 +1,5 @@
-import { data, Form } from "react-router";
+import { useEffect, useState } from "react";
+import { data, Form, useActionData } from "react-router";
 
 export async function action({request})
 {
@@ -32,6 +33,15 @@ export async function action({request})
 }
 export default function Formm()
 {
+  const data = useActionData()
+  const [prediction, setPrediction] = useState(null);
+  useEffect(()=>
+    {
+      if(data!==null)
+      {
+        setPrediction(data)  ; 
+      }
+    },[data])
   const schema = {
     Location: "object",
     MinTemp: "float64",
@@ -65,9 +75,9 @@ export default function Formm()
     WindDir3pm:  ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
       'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'],
     RainToday: ["Yes", "No"],
-    Season: ["Summer", "Winter", "Autumn", "Spring"],
+    Season: ["summer", "winter", "autumn", "spring"],
   };
-  return <Form method="post">
+  return <><Form method="post">
     {Object.entries(schema).map(([field , type])=>{ return <div key={field}><label>{field}</label>
       {type==="object"?<select name={field}>
         {dropdownOptions[field].map((opt)=>{return <option key={opt}value={opt}>{opt}</option>})}        
@@ -77,4 +87,6 @@ export default function Formm()
     })}
     <button type="submit">Predict</button>
   </Form>
+  {prediction&&<h3>Will it rain tomorrow : {prediction.prediction}</h3>}
+  </>
 }
