@@ -5,6 +5,6 @@ import Formm from "../components/Form";
 export default function Home()
 {
   return <>
-   <Formm/>
+   <Formm />
   </>
 }

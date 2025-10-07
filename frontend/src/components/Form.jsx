@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { data, Form, useActionData } from "react-router";
-
+import { data, Form, useActionData, useNavigation } from "react-router";
+import image from "../assets/image.jpg"; 
 export async function action({request})
 {
   const formdata = await request.formData() ;
@@ -35,6 +35,8 @@ export default function Formm()
 {
   const data = useActionData()
   const [prediction, setPrediction] = useState(null);
+  const navigation = useNavigation()
+  const isSubmitting = navigation.state=="submitting"
   useEffect(()=>
     {
       if(data!==null)
@@ -77,16 +79,21 @@ export default function Formm()
     RainToday: ["Yes", "No"],
     Season: ["summer", "winter", "autumn", "spring"],
   };
-  return <><Form method="post">
-    {Object.entries(schema).map(([field , type])=>{ return <div key={field}><label>{field}</label>
-      {type==="object"?<select name={field}>
+  return <><Form method="post" className="flex flex-col justify-center items-center gap-[30px] bg-cover bg-center bg-no-repeat text-amber-50 min-h-screen"
+  style={{ backgroundImage: `url(${image})` }}
+ >
+    <div className="flex  gap-[30px] items-center justify-center flex-wrap max-w-[1535px] text-amber-50">
+    {Object.entries(schema).map(([field , type])=>{ return <div className="flex item-center justify-center gap-[10px] w-[500px]" key={field}><label className="border w-[200px] block text-amber-50">{field}</label>
+        {type==="object"?<select className="w-[100px] border bg-black/30" name={field}>
         {dropdownOptions[field].map((opt)=>{return <option key={opt}value={opt}>{opt}</option>})}        
       </select>:
-      <input type="number" step={0.01} name={field}></input>}</div>
+      <input className="border w-[100px]" type="number" step={0.01} name={field}></input>}</div>
     
     })}
-    <button type="submit">Predict</button>
+    </div>
+    <button className="border w-[100px] bg-black/30" type="submit" disabled={isSubmitting}>{isSubmitting?"Submitting":"Predict"}</button>
+    {prediction&&<h3 className="text-amber-50 border">Will it rain tomorrow : {prediction.prediction}</h3>}
   </Form>
-  {prediction&&<h3>Will it rain tomorrow : {prediction.prediction}</h3>}
+  
   </>
 }
